@@ -272,7 +272,7 @@ pub fn parse(tokens: Vec<Token>) -> Vec<Node> {
 			}
 		}
 	}
-
+	
 	return tree;
 }
 
@@ -283,17 +283,14 @@ fn parse_arithmetic(op: char, value: String, tokens: &Vec<Token>, pointer: &mut 
 	// 	'*' => Operator::Multiply,
 	// 	'/' => Operator::Divide,
 	// 	'%' => Operator::Modulo,
+           
 	// 	_ => panic!("Invalid operator")
 	// };
 
-	println!("Operator: {}", op);
-	println!("Value: {}", value);
-	println!("Pointer: {}", *pointer);
-	println!("Tokens: {:?}", tokens);
 
 	// let mut left: Box<Node> = Box::new(Node::NumberLiteral(value.parse::<i32>().expect("Invalid number literal")));
 	// let mut right: Box<Node> = Box::new(Node::None);
-
+1
 	// *pointer += 1;
 
 	// while *pointer < tokens.len() {
