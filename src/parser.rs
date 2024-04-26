@@ -72,11 +72,13 @@ const SYMBOLS: [&str; 33] = [
 	"..."
 ];
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, Hash)]
 pub enum Type {
 	Void,
 	Int,
-	Char
+	IntPointer,
+	Char,
+	CharPointer
 }
 
 #[derive(Debug)]
@@ -98,7 +100,15 @@ pub enum Operator {
 	Or,
 	Not,
 	Xor
+}
 
+#[derive(Debug)]
+pub enum Context {
+	Program,
+	FunctionArguments,
+	FunctionBody,
+
+	VariableDeclaration
 }
 
 #[derive(Debug)]
@@ -108,6 +118,7 @@ pub enum Node {
 	NumberLiteral(i32),
 	CharLiteral(char),
 	StringLiteral(String),
+	VariableLiteral(String),
 
 	Arithmetic {
 		operator: Operator,
@@ -135,7 +146,7 @@ pub enum Node {
 
 	Struct {
 		name: String,
-		fields: HashMap<String, Type>
+		fields: HashSet<(String, Type)>
 	},
 
 	Enum {
@@ -146,7 +157,7 @@ pub enum Node {
 	Function {
 		name: String,
 		return_type: Type,
-		args: HashMap<String, Type>,
+		args: HashSet<(String, Type)>,
 		body: Vec<Node>
 	},
 
@@ -173,10 +184,10 @@ pub enum Node {
 		body: Vec<Node>
 	},
 
-	DoWhile {
-		condition: Box<Node>,
-		body: Vec<Node>
-	},
+	// DoWhile {
+	// 	condition: Box<Node>,
+	// 	body: Vec<Node>
+	// },
 
 	Return {
 		value: Box<Node>
@@ -187,26 +198,38 @@ pub enum Node {
 	Continue
 }
 
-pub fn parse(tokens: Vec<Token>) -> Vec<Node> {
+pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 	let mut pointer: usize = 0;
 	let mut tree: Vec<Node> = Vec::new();
 
 	while pointer < tokens.len() {
-		let token: &Token = &tokens[pointer];
+		if tokens.get(pointer) == None {
+			break;
+		}
+
+		let token: &Token = &tokens.get(pointer).expect("Invalid token");
 		let next_token: Option<&Token> = tokens.get(pointer + 1);
 		let last_token: Option<&Token> = if pointer > 0 { tokens.get(pointer - 1) } else { None };
 
-		pointer += 1;
+		println!("DEBUG: parse token: {:?} (last: {:?} next: {:?})", token, last_token, next_token);
 
 		match token {
 			Token::None => { tree.push(Node::None) },
 
-			Token::Identifier(name) => {
-				match name.as_str() {
-					"int" | "void" | "char" => {
-						parse_variable(name, next_token, last_token, &tokens, &mut pointer, &mut tree);
-
-						// parse_function()
+			Token::Identifier(identifier) => {
+				match identifier.as_str() {
+					"int" | "void" | "char" | "int*" | "void*" | "char*" => {
+						match tokens.get(pointer + 2).expect("Invalid variable/function declaration") {
+							Token::Operator('=') | Token::Separator(';') => {
+								parse_variable(identifier, next_token, last_token, &tokens, &mut pointer, &mut tree);
+							},
+							Token::Separator('(') => {
+								parse_function_declaration(identifier, next_token, last_token, &tokens, &mut pointer, &mut tree);
+							},
+							_ => {
+								panic!("Invalid variable/function declaration: {:?}", tokens.get(pointer + 1))
+							}
+						}
 					},
 
 					"if" => {
@@ -222,7 +245,7 @@ pub fn parse(tokens: Vec<Token>) -> Vec<Node> {
 					},
 
 					"do" => {
-
+						panic!("Do-while loops are not supported");
 					},
 
 					"return" => {
@@ -230,11 +253,11 @@ pub fn parse(tokens: Vec<Token>) -> Vec<Node> {
 					},
 					
 					"break" => {
-
+						tree.push(Node::Break);
 					},
 
 					"continue" => {
-
+						tree.push(Node::Continue);
 					},
 					
 
@@ -250,7 +273,7 @@ pub fn parse(tokens: Vec<Token>) -> Vec<Node> {
 					match next_token {
 						// Arithmetic operation
 						Some(Token::Operator(op)) => {
-							parse_arithmetic(*op, value.to_string(), &tokens, &mut pointer);
+							parse_arithmetic(*op, value.to_string(), &tokens, &mut pointer, &mut tree);
 						}
 
 						// Just a number
@@ -271,55 +294,52 @@ pub fn parse(tokens: Vec<Token>) -> Vec<Node> {
 				}
 			}
 		}
+
+		pointer += 1;
 	}
 	
 	return tree;
 }
 
-fn parse_arithmetic(op: char, value: String, tokens: &Vec<Token>, pointer: &mut usize) {
-	// let operator: Operator = match op {
-	// 	'+' => Operator::Add,
-	// 	'-' => Operator::Subtract,
-	// 	'*' => Operator::Multiply,
-	// 	'/' => Operator::Divide,
-	// 	'%' => Operator::Modulo,
+fn parse_arithmetic(op: char, value: String, tokens: &Vec<Token>, pointer: &mut usize, tree: &mut Vec<Node>) {
+	let operator: Operator = match op {
+		'+' => Operator::Add,
+		'-' => Operator::Subtract,
+		'*' => Operator::Multiply,
+		'/' => Operator::Divide,
+		'%' => Operator::Modulo,
            
-	// 	_ => panic!("Invalid operator")
-	// };
+		_ => panic!("Invalid operator")
+	};
 
+	let left = Node::NumberLiteral(value.parse().expect("Invalid number literal"));
+	let right = Node::NumberLiteral(tokens[*pointer + 1].to_string().parse().expect("Invalid number literal"));
 
-	// let mut left: Box<Node> = Box::new(Node::NumberLiteral(value.parse::<i32>().expect("Invalid number literal")));
-	// let mut right: Box<Node> = Box::new(Node::None);
-1
-	// *pointer += 1;
+	*pointer += 2;
 
-	// while *pointer < tokens.len() {
-	// 	let token = &tokens[*pointer];
-	// 	*pointer += 1;
+	if tokens.get(*pointer) != None {
+		panic!("Only two numbers are allowed in an arithmetic operation")
+	}
 
-	// 	if let Token::Number(value) = token {
-	// 		right = Box::new(Node::NumberLiteral(value.parse::<i32>().expect("Invalid number literal")));
-	// 	}
-
-	// 	// This compiler will only support arithmetic operations that end with a semicolon
-	// 	// What that basically means is:
-	// 	// int a = 1 + 2; will compile
-	// 	// printf(1 + 2); will not compile
-	// 	if let Token::Separator(';') = token {
-	// 		break;
-	// 	}
-	// }
+	tree.push(Node::Arithmetic {
+		operator: operator,
+		left: Box::new(left),
+		right: Box::new(right)
+	});
 }
 
 fn parse_comparison() {
 
 }
 
-fn parse_variable(name: &String, next_token: Option<&Token>, last_token: Option<&Token>, tokens: &Vec<Token>, pointer: &mut usize, tree: &mut Vec<Node>) {
-	let variable_type: Type = match name.as_str() {
-		"int" => Type::Int,
+fn parse_variable(identifier: &String, next_token: Option<&Token>, last_token: Option<&Token>, tokens: &Vec<Token>, pointer: &mut usize, tree: &mut Vec<Node>) {
+	let constant: bool = last_token == Some(&Token::Identifier("const".to_string()));
+	let variable_type: Type = match identifier.as_str() {
 		"void" => Type::Void,
+		"int" => Type::Int,
+		"int*" => Type::IntPointer,
 		"char" => Type::Char,
+		"char*" => Type::CharPointer,
 		_ => panic!("Invalid type")
 	};
 
@@ -327,15 +347,17 @@ fn parse_variable(name: &String, next_token: Option<&Token>, last_token: Option<
 
 	let mut variable_tokens: Vec<Token> = Vec::new();
 
-	if *&tokens.get(*pointer + 1) == Some(&Token::Separator(';'))  {
+	if *&tokens.get(*pointer + 2) == Some(&Token::Separator(';'))  {
 		// Uninitialized variable
 	} else {
 		// Initialized variable
 		*pointer += 2;
 
 		while *pointer < tokens.len() {
-			let token = &tokens[*pointer];
 			*pointer += 1;
+			let token = &tokens[*pointer];
+
+			println!("DEBUG: parse_variable token: {:?}", token);
 	
 			if *token == Token::Separator(';') {
 				break;
@@ -345,17 +367,107 @@ fn parse_variable(name: &String, next_token: Option<&Token>, last_token: Option<
 		}
 	}
 
-	let parsed_variable_tokens: Vec<Node> = parse(variable_tokens);
+	let parsed_variable_tokens: Vec<Node> = parse(variable_tokens, Context::VariableDeclaration);
 
 	tree.push(Node::Variable {
 		name: variable_name.to_string(),
-		constant: last_token == Some(&Token::Identifier("const".to_string())),
+		constant,
 		var_type: variable_type,
 		value: if parsed_variable_tokens.len() > 0 { Some(parsed_variable_tokens) } else { None }
 	});
+	// *pointer += 1;
 }
 
-fn parse_function() {
+fn parse_function_declaration(identifier: &String, next_token: Option<&Token>, last_token: Option<&Token>, tokens: &Vec<Token>, pointer: &mut usize, tree: &mut Vec<Node>) {
+	let return_type: Type = match tokens.get(*pointer - 1).expect("Invalid return type").to_string().as_str() {
+		"void" => Type::Void,
+		"int" => Type::Int,
+		"int*" => Type::IntPointer,
+		"char" => Type::Char,
+		"char*" => Type::CharPointer,
+		_ => panic!("Invalid type")
+	};
+	
+	let mut arguments: HashSet<(String, Type)> = HashSet::new();
+
+	*pointer *= 2;
+	
+	while *pointer < tokens.len() {
+		*pointer += 1;
+		let token = tokens.get(*pointer);
+
+		println!("DEBUG: parse_function_declaration token: {:?} (last: {:?} next: {:?})", token, last_token, next_token);
+
+		match token.unwrap() {
+			Token::Identifier(argument_type) => {
+				match argument_type.as_str() {
+					"int" | "void" | "char" | "int*" | "void*" | "char*" => {
+						let argument_name: String = tokens.get(*pointer + 1).expect("Invalid argument name").to_string();
+						let argument_type: Type = match argument_type.as_str() {
+							"void" => Type::Void,
+							"int" => Type::Int,
+							"int*" => Type::IntPointer,
+							"char" => Type::Char,
+							"char*" => Type::CharPointer,
+							_ => panic!("Invalid type")
+						};
+
+						arguments.insert((argument_name, argument_type));
+						*pointer += 1;
+					}
+
+					_ => {
+						panic!("Invalid argument type: {}", argument_type)
+					}
+				}
+			},
+
+			Token::Separator(',') => {
+				continue;
+			},
+
+			Token::Separator(')') => {
+				break;
+			},
+
+			_ => {
+				panic!("Invalid argument type: {:?}", token)
+			}
+		}
+	}
+
+	*pointer += 1;
+
+	println!("Degen token: {:?}", tokens.get(*pointer));
+
+	if tokens.get(*pointer) != Some(&Token::Separator('{')) {
+		panic!("Invalid function declaration")
+	}
+
+	*pointer += 1;
+
+	let mut function_tokens: Vec<Token> = Vec::new();
+
+	while *pointer < tokens.len() {
+		let token = &tokens[*pointer];
+		*pointer += 1;
+
+		if *token == Token::Separator('}') {
+			break;
+		} else {
+			function_tokens.push(token.clone());
+		}
+	}
+
+	tree.push(Node::Function {
+		name: identifier.to_string(),
+		return_type: return_type,
+		args: arguments.into_iter().collect(),
+		body: parse(function_tokens, Context::FunctionBody)
+	});
+}
+
+fn parse_function_call() {
 
 }
 
@@ -371,18 +483,10 @@ fn parse_while() {
 
 }
 
-fn parse_do_while() {
+// fn parse_do_while() {
 
-}
+// }
 
 fn parse_return() {
-
-}
-
-fn parse_break() {
-
-}
-
-fn parse_continue() {
 
 }

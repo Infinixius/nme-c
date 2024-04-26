@@ -31,7 +31,8 @@ int sqrt(int x);
 
 typedef enum {
 	BLACK,
-	WHITE
+	WHITE,
+	// TODO: More colors
 } COLOR;
 
 int get_screen_width();
@@ -53,8 +54,7 @@ void draw_image(int x, int y, int w, int h, char* file_path);
 
 /* I/O functions */
 
+int get_key_press();
+int get_random_number();
 void print(char* text);
-
-int random_int();
-
-int key_pressed();
+void sleep(int ms);

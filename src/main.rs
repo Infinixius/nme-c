@@ -1,7 +1,7 @@
 mod parser;
 mod tokenizer;
 
-use parser::parse;
+use parser::{parse, Context};
 use std::time::Instant;
 use tokenizer::tokenize;
 
@@ -24,7 +24,7 @@ fn main() {
 
         println!("BEGIN: Parsing step");
 
-        let tree = parse(tokens);
+        let tree = parse(tokens, Context::Program);
 
         for node in &tree {
             println!("{:?}", node);

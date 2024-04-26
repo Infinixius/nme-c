@@ -1,14 +1,13 @@
-// int x = 3;
-// int y = 5;
-// char c = 'a';
-// int u;
+// int a = 1 + 1;
+// int s = 1 - 2;
+// int m = 1 * 2;
+// int d = 1 / 2;
 
-// int a = x + y;
+int x = 1;
+char y = 2;
+int z = 33;
+int u;
 
-// int a = 0;
-// int u;
-// int b = 5;
+// void functionA() {}
 
-int a = 1 + 2;
-int b = 1 + (2 + 2);
-int c = (1 + 1) + (1 + 1);
+// void functionB() {}
