@@ -211,7 +211,7 @@ pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 		let next_token: Option<&Token> = tokens.get(pointer + 1);
 		let last_token: Option<&Token> = if pointer > 0 { tokens.get(pointer - 1) } else { None };
 
-		println!("DEBUG: parse token: {:?} (last: {:?} next: {:?})", token, last_token, next_token);
+		println!("DEBUG: parse token: {:?} (last: {:?} next: {:?}) pointer: {}", token, last_token, next_token, pointer);
 
 		match token {
 			Token::None => { tree.push(Node::None) },
@@ -379,7 +379,7 @@ fn parse_variable(identifier: &String, next_token: Option<&Token>, last_token: O
 }
 
 fn parse_function_declaration(identifier: &String, next_token: Option<&Token>, last_token: Option<&Token>, tokens: &Vec<Token>, pointer: &mut usize, tree: &mut Vec<Node>) {
-	let return_type: Type = match tokens.get(*pointer - 1).expect("Invalid return type").to_string().as_str() {
+	let return_type: Type = match identifier.as_str() {
 		"void" => Type::Void,
 		"int" => Type::Int,
 		"int*" => Type::IntPointer,
@@ -387,16 +387,18 @@ fn parse_function_declaration(identifier: &String, next_token: Option<&Token>, l
 		"char*" => Type::CharPointer,
 		_ => panic!("Invalid type")
 	};
+
+	let name = next_token.expect("Invalid function name");
 	
 	let mut arguments: HashSet<(String, Type)> = HashSet::new();
 
-	*pointer *= 2;
+	*pointer += 2;
 	
 	while *pointer < tokens.len() {
 		*pointer += 1;
 		let token = tokens.get(*pointer);
 
-		println!("DEBUG: parse_function_declaration token: {:?} (last: {:?} next: {:?})", token, last_token, next_token);
+		println!("DEBUG: parse_function_declaration_arguments token: {:?}", token);
 
 		match token.unwrap() {
 			Token::Identifier(argument_type) => {
@@ -438,32 +440,36 @@ fn parse_function_declaration(identifier: &String, next_token: Option<&Token>, l
 
 	*pointer += 1;
 
-	println!("Degen token: {:?}", tokens.get(*pointer));
-
 	if tokens.get(*pointer) != Some(&Token::Separator('{')) {
 		panic!("Invalid function declaration")
 	}
 
-	*pointer += 1;
-
 	let mut function_tokens: Vec<Token> = Vec::new();
 
 	while *pointer < tokens.len() {
-		let token = &tokens[*pointer];
 		*pointer += 1;
+		let token = &tokens[*pointer];
+
+		println!("DEBUG: parse_function_declaration_body token: {:?}", token);
 
 		if *token == Token::Separator('}') {
 			break;
+		} else if *token == Token::Separator('{') {
+			continue;
 		} else {
 			function_tokens.push(token.clone());
 		}
 	}
 
 	tree.push(Node::Function {
-		name: identifier.to_string(),
+		name: name.to_string(),
 		return_type: return_type,
 		args: arguments.into_iter().collect(),
-		body: parse(function_tokens, Context::FunctionBody)
+		body: if function_tokens.len() > 0 {
+			parse(function_tokens, Context::FunctionBody)
+		} else {
+			Vec::new()
+		}
 	});
 }
 
