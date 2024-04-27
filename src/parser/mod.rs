@@ -93,7 +93,7 @@ const SYMBOLS: [&str; 33] = [
 	"..."
 ];
 
-#[derive(Debug, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Type {
 	Void,
 	Int,
@@ -102,7 +102,7 @@ pub enum Type {
 	CharPointer
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Operator {
 	Add,
 	Subtract,
@@ -129,7 +129,9 @@ pub enum Context {
 	FunctionArguments,
 	FunctionBody,
 
-	VariableDeclaration
+	VariableDeclaration,
+
+	Arithmetic
 }
 
 impl std::fmt::Display for Context {
@@ -138,12 +140,15 @@ impl std::fmt::Display for Context {
 			Context::Program => write!(f, "program"),
 			Context::FunctionArguments => write!(f, "func_arg"),
 			Context::FunctionBody => write!(f, "func_body"),
-			Context::VariableDeclaration => write!(f, "var_decl")
+
+			Context::VariableDeclaration => write!(f, "var_decl"),
+
+			Context::Arithmetic => write!(f, "arithmetic")
 		}
 	}
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Node {
 	None,
 
@@ -277,10 +282,6 @@ pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 
 					},
 
-					"do" => {
-						panic!("Do-while loops are not supported");
-					},
-
 					"return" => {
 
 					},
@@ -292,10 +293,22 @@ pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 					"continue" => {
 						tree.push(Node::Continue);
 					},
-					
+
+					"auto" | "do" | "double" | "extern" | "float" | "long" | "register" | "short" | "signed" | "static" | "typedef" | "union" | "unsigned" => {
+						panic!("The {} keyword is not supported", identifier);
+					},
 
 					_ => {
-						
+						// Variable reference
+						match next_token {
+							Some(Token::Operator(op)) => { // Arithmetic operation
+								parse_arithmetic(*op, token.clone(), &tokens, &mut pointer, &mut tree);
+							}
+	
+							_ => { // Just a variable reference?
+								tree.push(Node::VariableReference(identifier.to_string()));
+							}
+						}
 					}
 				}
 			},
@@ -304,7 +317,7 @@ pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 				if let Token::Number(value) = token { // Number literal
 					match next_token {
 						Some(Token::Operator(op)) => { // Arithmetic operation
-							parse_arithmetic(*op, value.to_string(), &tokens, &mut pointer, &mut tree);
+							parse_arithmetic(*op, token.clone(), &tokens, &mut pointer, &mut tree);
 						}
 
 						_ => { // Just a number
@@ -315,8 +328,6 @@ pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 					tree.push(Node::CharLiteral(*value));
 				} else if let Token::String(value) = token { // String literal
 					tree.push(Node::StringLiteral(value.to_string()));
-				} else if let Token::Identifier(value) = token { // Variable reference
-					tree.push(Node::VariableReference(value.to_string()));
 				} else {
 					panic!("Invalid token: {:?}", token);
 				}

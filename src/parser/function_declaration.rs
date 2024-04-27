@@ -96,6 +96,7 @@ pub fn parse_function_declaration(identifier: &String, next_token: Option<&Token
 	};
 
 	debugln!("parse_variable new node: {:?}", node);
+	
 
 	tree.push(node);
 }

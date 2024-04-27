@@ -2,14 +2,14 @@
 mod macros;
 mod parser;
 mod tokenizer;
-
-use colored::Colorize;
 use parser::{parse, Context};
 use panic_message::get_panic_info_message;
 use std::time::Instant;
 use tokenizer::tokenize;
 
 fn main() {
+    use colored::Colorize;
+
     // Setup custom panic hook
     std::panic::set_hook(Box::new(|panic_info: &std::panic::PanicInfo| {
         if panic_info.location().is_some() && get_panic_info_message(panic_info).is_some() {
