@@ -25,7 +25,7 @@ pub fn parse_variable(identifier: &String, next_token: Option<&Token>, last_toke
 			*pointer += 1;
 			let token = &tokens[*pointer];
 
-			println!("DEBUG: parse_variable token: {:?}", token);
+			debugln!("parse_variable token: {:?}", token);
 	
 			if *token == Token::Separator(';') {
 				break;

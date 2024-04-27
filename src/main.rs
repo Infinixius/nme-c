@@ -1,6 +1,9 @@
+#[macro_use]
+mod macros;
 mod parser;
 mod tokenizer;
 
+use colored::Colorize;
 use parser::{parse, Context};
 use std::time::Instant;
 use tokenizer::tokenize;
@@ -8,13 +11,13 @@ use tokenizer::tokenize;
 fn main() {
     if let Some(file_path) = std::env::args().nth(1) {
         let source: String = std::fs::read_to_string(&file_path).unwrap_or_else(|error| {
-			eprintln!("ERROR: {}", error);
+			errorln!("{}", error);
 			std::process::exit(1);
 		});
 
         let start = Instant::now();
 
-        println!("BEGIN: Tokenization step");
+        println!("{} Tokenization step", "BEGIN:".yellow());
 
         let tokens = tokenize(source);
 
@@ -22,7 +25,7 @@ fn main() {
             println!("{:?}", token);
         }
 
-        println!("BEGIN: Parsing step");
+        println!("{} BEGIN: Parsing step", "BEGIN:".yellow());
 
         let tree = parse(tokens, Context::Program);
 
@@ -30,8 +33,8 @@ fn main() {
             println!("{:?}", node);
         }
 
-        println!("SUCCESS: Compiled {} in {:?}", file_path, start.elapsed());
+        println!("{} Compiled {} in {:?}", "SUCCESS:".bright_green(), file_path, start.elapsed());
     } else {
-        println!("ERROR: No file path provided");
+        errorln!("No file path provided");
     }
 }

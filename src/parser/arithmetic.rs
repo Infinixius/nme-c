@@ -12,9 +12,9 @@ pub fn parse_arithmetic(op: char, value: String, tokens: &Vec<Token>, pointer: &
 	};
 
 	let left = Node::NumberLiteral(value.parse().expect("Invalid number literal"));
-	let right = Node::NumberLiteral(tokens[*pointer + 1].to_string().parse().expect("Invalid number literal"));
+	let right = Node::NumberLiteral(tokens.get(*pointer + 2).unwrap().to_string().parse().expect("Invalid number literal"));
 
-	*pointer += 2;
+	*pointer += 3;
 
 	if tokens.get(*pointer) != None {
 		panic!("Only two numbers are allowed in an arithmetic operation")

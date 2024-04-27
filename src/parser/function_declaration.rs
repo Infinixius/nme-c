@@ -21,7 +21,7 @@ pub fn parse_function_declaration(identifier: &String, next_token: Option<&Token
 		*pointer += 1;
 		let token = tokens.get(*pointer);
 
-		println!("DEBUG: parse_function_declaration_arguments token: {:?}", token);
+		debugln!("parse_function_declaration_arguments token: {:?}", token);
 
 		match token.unwrap() {
 			Token::Identifier(argument_type) => {
@@ -73,7 +73,7 @@ pub fn parse_function_declaration(identifier: &String, next_token: Option<&Token
 		*pointer += 1;
 		let token = &tokens[*pointer];
 
-		println!("DEBUG: parse_function_declaration_body token: {:?}", token);
+		debugln!("parse_function_declaration_body token: {:?}", token);
 
 		if *token == Token::Separator('}') {
 			break;

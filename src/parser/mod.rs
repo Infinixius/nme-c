@@ -231,7 +231,7 @@ pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 		let next_token: Option<&Token> = tokens.get(pointer + 1);
 		let last_token: Option<&Token> = if pointer > 0 { tokens.get(pointer - 1) } else { None };
 
-		println!("DEBUG: parse token: {:?} (last: {:?} next: {:?}) pointer: {}", token, last_token, next_token, pointer);
+		debugln!("parse token: {:?} (last: {:?} next: {:?}) pointer: {}", token, last_token, next_token, pointer);
 
 		match token {
 			Token::None => { tree.push(Node::None) },
@@ -288,29 +288,22 @@ pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 			},
 
 			_ => {
-				// Number literal
-				if let Token::Number(value) = token {
+				if let Token::Number(value) = token { // Number literal
 					match next_token {
-						// Arithmetic operation
-						Some(Token::Operator(op)) => {
+						Some(Token::Operator(op)) => { // Arithmetic operation
 							parse_arithmetic(*op, value.to_string(), &tokens, &mut pointer, &mut tree);
 						}
 
-						// Just a number
-						_ => {
+						_ => { // Just a number
 							tree.push(Node::NumberLiteral(value.parse().expect("Invalid number literal")));
 						}
 					}
-				}
-
-				// Char literal
-				if let Token::Char(value) = token {
+				} else if let Token::Char(value) = token { // Char literal
 					tree.push(Node::CharLiteral(*value));
-				}
-
-				// String literal
-				if let Token::String(value) = token {
+				} else if let Token::String(value) = token { // String literal
 					tree.push(Node::StringLiteral(value.to_string()));
+				} else {
+					debugln!("unknow: {:?}", token);
 				}
 			}
 		}
