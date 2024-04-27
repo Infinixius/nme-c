@@ -20,9 +20,13 @@ pub fn parse_arithmetic(op: char, value: String, tokens: &Vec<Token>, pointer: &
 		panic!("Only two numbers are allowed in an arithmetic operation")
 	}
 
-	tree.push(Node::Arithmetic {
+	let node = Node::Arithmetic {
 		operator: operator,
 		left: Box::new(left),
 		right: Box::new(right)
-	});
+	};
+
+	debugln!("parse_arithmetic new node: {:?}", node);
+
+	tree.push(node);
 }

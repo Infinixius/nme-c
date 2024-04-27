@@ -37,11 +37,14 @@ pub fn parse_variable(identifier: &String, next_token: Option<&Token>, last_toke
 
 	let parsed_variable_tokens: Vec<Node> = parse(variable_tokens, Context::VariableDeclaration);
 
-	tree.push(Node::Variable {
+	let node = Node::Variable {
 		name: variable_name.to_string(),
 		constant,
 		var_type: variable_type,
 		value: if parsed_variable_tokens.len() > 0 { Some(parsed_variable_tokens) } else { None }
-	});
-	// *pointer += 1;
+	};
+
+	debugln!("parse_variable new node: {:?}", node);
+
+	tree.push(node);
 }

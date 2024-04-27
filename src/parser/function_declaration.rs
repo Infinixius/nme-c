@@ -84,7 +84,7 @@ pub fn parse_function_declaration(identifier: &String, next_token: Option<&Token
 		}
 	}
 
-	tree.push(Node::Function {
+	let node = Node::Function {
 		name: name.to_string(),
 		return_type: return_type,
 		args: arguments.into_iter().collect(),
@@ -93,5 +93,9 @@ pub fn parse_function_declaration(identifier: &String, next_token: Option<&Token
 		} else {
 			Vec::new()
 		}
-	});
+	};
+
+	debugln!("parse_variable new node: {:?}", node);
+
+	tree.push(node);
 }

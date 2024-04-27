@@ -20,6 +20,7 @@ use crate::parser::while_loop::parse_while_loop;
 
 use crate::tokenizer::Token;
 use std::collections::HashSet;
+use std::path::Display;
 
 const KEYWORDS: [&str; 26] = [
 	"auto",
@@ -131,6 +132,17 @@ pub enum Context {
 	VariableDeclaration
 }
 
+impl std::fmt::Display for Context {
+	fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+		match self {
+			Context::Program => write!(f, "program"),
+			Context::FunctionArguments => write!(f, "func_arg"),
+			Context::FunctionBody => write!(f, "func_body"),
+			Context::VariableDeclaration => write!(f, "var_decl")
+		}
+	}
+}
+
 #[derive(Debug)]
 pub enum Node {
 	None,
@@ -232,7 +244,7 @@ pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 		let next_token: Option<&Token> = tokens.get(pointer + 1);
 		let last_token: Option<&Token> = if pointer > 0 { tokens.get(pointer - 1) } else { None };
 
-		debugln!("parse token: {:?} (last: {:?} next: {:?}) pointer: {}", token, last_token, next_token, pointer);
+		debugln!("parse token_{}: {:?} (last: {:?} next: {:?}) pointer: {}", context, token, last_token, next_token, pointer);
 
 		match token {
 			Token::None => { tree.push(Node::None) },
