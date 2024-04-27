@@ -138,7 +138,8 @@ pub enum Node {
 	NumberLiteral(i32),
 	CharLiteral(char),
 	StringLiteral(String),
-	VariableLiteral(String),
+
+	VariableReference(String),
 
 	Arithmetic {
 		operator: Operator,
@@ -302,8 +303,10 @@ pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 					tree.push(Node::CharLiteral(*value));
 				} else if let Token::String(value) = token { // String literal
 					tree.push(Node::StringLiteral(value.to_string()));
+				} else if let Token::Identifier(value) = token { // Variable reference
+					tree.push(Node::VariableReference(value.to_string()));
 				} else {
-					debugln!("unknow: {:?}", token);
+					panic!("Invalid token: {:?}", token);
 				}
 			}
 		}

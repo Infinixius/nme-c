@@ -5,10 +5,31 @@ mod tokenizer;
 
 use colored::Colorize;
 use parser::{parse, Context};
+use panic_message::get_panic_info_message;
 use std::time::Instant;
 use tokenizer::tokenize;
 
 fn main() {
+    // Setup custom panic hook
+    std::panic::set_hook(Box::new(|panic_info: &std::panic::PanicInfo| {
+        if panic_info.location().is_some() && get_panic_info_message(panic_info).is_some() {
+            let location = panic_info.location().unwrap();
+            println!(
+                "{} {:?} at {} line {}:{}",
+
+                "PANIC:".red(),
+                get_panic_info_message(panic_info).unwrap(),
+                location.file(),
+                location.line(),
+                location.column()
+            );
+        } else {
+            println!("{} {:?}", "PANIC:".red(), panic_info);
+        }
+		std::process::exit(1);
+	}));
+
+    // Begin actual program by checking if a file path was provided
     if let Some(file_path) = std::env::args().nth(1) {
         let source: String = std::fs::read_to_string(&file_path).unwrap_or_else(|error| {
 			errorln!("{}", error);
