@@ -294,6 +294,8 @@ pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 						tree.push(Node::Continue);
 					},
 
+					"asm" => {},
+
 					"auto" | "do" | "double" | "extern" | "float" | "long" | "register" | "short" | "signed" | "static" | "typedef" | "union" | "unsigned" => {
 						panic!("The {} keyword is not supported", identifier);
 					},

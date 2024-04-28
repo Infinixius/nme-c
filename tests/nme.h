@@ -52,7 +52,7 @@ void draw_circle(int x, int y, int radius, COLOR color);
 void draw_text(int x, int y, char* text, COLOR color);
 void draw_image(int x, int y, int w, int h, char* file_path);
 
-/* I/O functions */
+/* I/O & misc functions */
 
 int get_key_press();
 int get_random_number();

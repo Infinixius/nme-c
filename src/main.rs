@@ -1,3 +1,6 @@
+use colored::Colorize;
+
+mod compiler;
 #[macro_use]
 mod macros;
 mod parser;
@@ -8,7 +11,6 @@ use std::time::Instant;
 use tokenizer::tokenize;
 
 fn main() {
-    use colored::Colorize;
 
     // Setup custom panic hook
     std::panic::set_hook(Box::new(|panic_info: &std::panic::PanicInfo| {

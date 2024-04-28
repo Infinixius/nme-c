@@ -1,6 +1,6 @@
 use crate::parser::{parse, Context, Node, Operator, Token};
 
-pub fn parse_arithmetic(op: char, value: Token, tokens: &Vec<Token>, pointer: &mut usize, tree: &mut Vec<Node>) {
+pub fn parse_arithmetic(op: char, value: Token, tokens: &[Token], pointer: &mut usize, tree: &mut Vec<Node>) {
 	let operator: Operator = match op {
 		'+' => Operator::Add,
 		'-' => Operator::Subtract,

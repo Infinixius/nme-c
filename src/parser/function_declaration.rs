@@ -1,8 +1,8 @@
 use crate::parser::{parse, Context, Node, Type, Token};
 use std::collections::HashSet;
 
-pub fn parse_function_declaration(identifier: &String, next_token: Option<&Token>, last_token: Option<&Token>, tokens: &Vec<Token>, pointer: &mut usize, tree: &mut Vec<Node>) {
-	let return_type: Type = match identifier.as_str() {
+pub fn parse_function_declaration(identifier: &str, next_token: Option<&Token>, last_token: Option<&Token>, tokens: &[Token], pointer: &mut usize, tree: &mut Vec<Node>) {
+	let return_type: Type = match identifier {
 		"void" => Type::Void,
 		"int" => Type::Int,
 		"int*" => Type::IntPointer,

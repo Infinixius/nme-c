@@ -1,8 +1,8 @@
 use crate::parser::{parse, Context, Node, Type, Token};
 
-pub fn parse_variable(identifier: &String, next_token: Option<&Token>, last_token: Option<&Token>, tokens: &Vec<Token>, pointer: &mut usize, tree: &mut Vec<Node>) {
+pub fn parse_variable(identifier: &str, next_token: Option<&Token>, last_token: Option<&Token>, tokens: &[Token], pointer: &mut usize, tree: &mut Vec<Node>) {
 	let constant: bool = last_token == Some(&Token::Identifier("const".to_string()));
-	let variable_type: Type = match identifier.as_str() {
+	let variable_type: Type = match identifier {
 		"void" => Type::Void,
 		"int" => Type::Int,
 		"int*" => Type::IntPointer,
