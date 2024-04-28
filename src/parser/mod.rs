@@ -102,7 +102,7 @@ pub enum Type {
 	CharPointer
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub enum Operator {
 	Add,
 	Subtract,
@@ -148,7 +148,7 @@ impl std::fmt::Display for Context {
 	}
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub enum Node {
 	None,
 
@@ -256,7 +256,7 @@ pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 
 			Token::Identifier(identifier) => {
 				match identifier.as_str() {
-					"int" | "void" | "char" | "int*" | "void*" | "char*" => {
+					"int" | "int*" | "void" | "void*" | "char" | "char*" => {
 						match tokens.get(pointer + 2).expect("Invalid variable/function declaration") {
 							Token::Operator('=') | Token::Separator(';') => {
 								parse_variable(identifier, next_token, last_token, &tokens, &mut pointer, &mut tree);
@@ -293,6 +293,8 @@ pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 					"continue" => {
 						tree.push(Node::Continue);
 					},
+
+					"const" => {}, // Ignore, as we parse constants in the variable declaration
 
 					"asm" => {},
 

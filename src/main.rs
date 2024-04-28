@@ -42,13 +42,13 @@ fn main() {
 
         println!("{} Tokenization step", "BEGIN:".yellow());
 
-        let tokens = tokenize(source);
+        let tokens = tokenize(&source);
 
         for token in &tokens {
             println!("{:?}", token);
         }
 
-        println!("{} BEGIN: Parsing step", "BEGIN:".yellow());
+        println!("{} Parsing step", "BEGIN:".yellow());
 
         let tree = parse(tokens, Context::Program);
 

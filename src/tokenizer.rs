@@ -27,7 +27,7 @@ impl ToString for Token {
 	}
 }
 
-pub fn tokenize(source: String) -> Vec<Token> {
+pub fn tokenize(source: &str) -> Vec<Token> {
 	let mut pointer: usize = 0;
 	let mut tokens: Vec<Token> = Vec::new();
 	

@@ -17,6 +17,7 @@ pub fn parse_variable(identifier: &str, next_token: Option<&Token>, last_token: 
 
 	if *&tokens.get(*pointer + 2) == Some(&Token::Separator(';'))  {
 		// Uninitialized variable
+		*pointer += 2;
 	} else {
 		// Initialized variable
 		*pointer += 2;
@@ -36,6 +37,21 @@ pub fn parse_variable(identifier: &str, next_token: Option<&Token>, last_token: 
 	}
 
 	let parsed_variable_tokens: Vec<Node> = parse(variable_tokens, Context::VariableDeclaration);
+
+	if variable_type == Type::Int && parsed_variable_tokens.len() > 0 {
+		match &parsed_variable_tokens[0] {
+			Node::NumberLiteral(_) => {},
+			Node::Arithmetic  {..} => {}
+			_ => panic!("Invalid value for int variable")
+		}
+	} else if variable_type == Type::Char && parsed_variable_tokens.len() > 0 {
+		match &parsed_variable_tokens[0] {
+			Node::CharLiteral(_) => {},
+			_ => panic!("Invalid value for char variable")
+		}
+	} else if variable_type == Type::Void {
+		panic!("Invalid type for variable")
+	}
 
 	let node = Node::Variable {
 		name: variable_name.to_string(),
