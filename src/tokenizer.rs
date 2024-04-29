@@ -151,6 +151,17 @@ pub fn tokenize(source: &str) -> Vec<Token> {
 				}
 
 				tokens.push(Token::Char(string.chars().next().unwrap()));
+			},
+			// Ignore all includes
+			'#' => {
+				while pointer < source.len() {
+					let character: char = source.chars().nth(pointer).unwrap();
+					pointer += 1;
+
+					if &character == &'\n' {
+						break;
+					}
+				}
 			}
 			_ => {
 				if char.is_alphabetic() {

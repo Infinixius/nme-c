@@ -99,7 +99,8 @@ pub enum Type {
 	Int,
 	IntPointer,
 	Char,
-	CharPointer
+	CharPointer,
+	Boolean
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
@@ -154,6 +155,7 @@ pub enum Node {
 
 	NumberLiteral(i32),
 	CharLiteral(char),
+	BooleanLiteral(bool),
 	StringLiteral(String),
 
 	VariableReference(String),
@@ -256,7 +258,7 @@ pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 
 			Token::Identifier(identifier) => {
 				match identifier.as_str() {
-					"int" | "int*" | "void" | "void*" | "char" | "char*" => {
+					"bool" | "int" | "int*" | "void" | "void*" | "char" | "char*" => {
 						match tokens.get(pointer + 2).expect("Invalid variable/function declaration") {
 							Token::Operator('=') | Token::Separator(';') => {
 								parse_variable(identifier, next_token, last_token, &tokens, &mut pointer, &mut tree);
@@ -300,6 +302,14 @@ pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 
 					"auto" | "do" | "double" | "extern" | "float" | "long" | "register" | "short" | "signed" | "static" | "typedef" | "union" | "unsigned" => {
 						panic!("The {} keyword is not supported", identifier);
+					},
+
+					"bool*" => {
+						panic!("Bool pointers are not supported");
+					},
+
+					"true" | "false" => {
+						tree.push(Node::BooleanLiteral(identifier == "true"));
 					},
 
 					_ => {

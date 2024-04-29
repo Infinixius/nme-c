@@ -8,6 +8,7 @@ pub fn parse_variable(identifier: &str, next_token: Option<&Token>, last_token: 
 		"int*" => Type::IntPointer,
 		"char" => Type::Char,
 		"char*" => Type::CharPointer,
+		"bool" => Type::Boolean,
 		_ => panic!("Invalid type")
 	};
 

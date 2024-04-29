@@ -65,6 +65,36 @@ fn char() {
 }
 
 #[test]
+fn boolean() {
+	const SOURCE: &str = "bool b = true;";
+
+	let tokens = tokenize(SOURCE);
+
+	let ideal_tokens = vec![
+		Token::Identifier("bool".into()),
+		Token::Identifier("b".into()),
+		Token::Operator('='),
+		Token::Identifier("true".into()),
+		Token::Separator(';'),
+	];
+
+	assert_eq!(tokens, ideal_tokens);
+
+	let tree = parse(tokens, nme_c::parser::Context::Program);
+
+	let ideal_tree = vec![
+		Node::Variable {
+			name: "b".into(),
+			constant: false,
+			var_type: Type::Boolean,
+			value: Some(vec![Node::BooleanLiteral(true)])
+		},
+	];
+
+	assert_eq!(tree, ideal_tree);
+}
+
+#[test]
 fn uninitialized() {
 	const SOURCE: &str = "int u;";
 

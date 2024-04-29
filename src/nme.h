@@ -1,10 +1,13 @@
 // nme.h
 // This header file is the "standard library" for the nme-c compiler.
 
+#ifndef NME_H
+#define NME_H
+
 /* Booleans */
-// typedef int bool;
-// #define true 1
-// #define false 0
+typedef int bool;
+#define true 1
+#define false 0
 
 /* Math functons */
 
@@ -21,11 +24,6 @@ int min(int x, int y);
 int max(int x, int y);
 int pow(int x, int y);
 int sqrt(int x);
-
-// https://www.lemon64.com/forum/viewtopic.php?t=10492
-// int sin(int x);
-// int cos(int x);
-// int tan(int x);
 
 /* Graphics functions */
 
@@ -58,3 +56,5 @@ int get_key_press();
 int get_random_number();
 void print(char* text);
 void sleep(int ms);
+
+#endif
