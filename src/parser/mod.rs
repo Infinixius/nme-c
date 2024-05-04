@@ -1,5 +1,5 @@
-// mod arithmetic;
-// mod comparision;
+mod arithmetic;
+mod comparision;
 mod expression;
 mod for_loop;
 mod function_call;
@@ -9,8 +9,6 @@ mod return_statement;
 mod variable;
 mod while_loop;
 
-// use crate::parser::arithmetic::parse_arithmetic;
-// use crate::parser::comparision::parse_comparison;
 use crate::parser::expression::parse_expression;
 use crate::parser::for_loop::parse_for_loop;
 use crate::parser::function_call::parse_function_call;
@@ -63,7 +61,8 @@ pub enum Context {
 
 	VariableDeclaration,
 
-	Arithmetic
+	Arithmetic,
+	Comparision
 }
 
 impl std::fmt::Display for Context {
@@ -75,7 +74,8 @@ impl std::fmt::Display for Context {
 
 			Context::VariableDeclaration => write!(f, "var_decl"),
 
-			Context::Arithmetic => write!(f, "arithmetic")
+			Context::Arithmetic => write!(f, "arithmetic"),
+			Context::Comparision => write!(f, "comparision")
 		}
 	}
 }
@@ -182,7 +182,7 @@ pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 		let next_token: Option<&Token> = tokens.get(pointer + 1);
 		let last_token: Option<&Token> = if pointer > 0 { tokens.get(pointer - 1) } else { None };
 
-		debugln!("main_parse: token_{}: {:?} (last: {:?} next: {:?}) pointer: {}", context, token, last_token, next_token, pointer);
+		debugln!("main_parse({}) : {:?} (last: {:?} next: {:?}) pointer: {}", context, token, last_token, next_token, pointer);
 
 		match token {
 			Token::None => { tree.push(Node::None) },

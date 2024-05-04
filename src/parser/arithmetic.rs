@@ -1,4 +1,4 @@
-use crate::parser::{parse, Context, Node, Operator, Token};
+use crate::parser::{parse, Context, Expression, Node, Operator, Token};
 
 pub fn parse_arithmetic(op: char, value: Token, tokens: &[Token], pointer: &mut usize, tree: &mut Vec<Node>) {
 	let operator: Operator = match op {
@@ -20,7 +20,7 @@ pub fn parse_arithmetic(op: char, value: Token, tokens: &[Token], pointer: &mut 
 		panic!("Only two operands are allowed in an arithmetic operation")
 	}
 
-	let node = Node::Arithmetic {
+	let node = Expression::Arithmetic {
 		operator: operator,
 		left: Box::new(left[0].clone()),
 		right: Box::new(right[0].clone())
@@ -28,5 +28,5 @@ pub fn parse_arithmetic(op: char, value: Token, tokens: &[Token], pointer: &mut 
 
 	debugln!("parse_arithmetic new node: {:?}", node);
 
-	tree.push(node);
+	tree.push(Node::Expression(node));
 }

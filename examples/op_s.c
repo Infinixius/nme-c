@@ -1,5 +1,3 @@
 #include <nme.h>
 
-int x = 1;
-
-x = 5 + 3;
+x = 1 > 2;
