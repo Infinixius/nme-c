@@ -7,36 +7,7 @@
 ## Keywords
 
 The compiler supports the following C keywords:
-```
-
-```
-
-```
-auto        enum         restrict    unsigned
-break       extern       return      void
-case        float        short       volatile
-char        for          signed      while
-const       goto         sizeof      _Bool
-continue    if           static      _Complex
-default     inline       struct      _Imaginary
-do          int          switch
-double      long         typedef
-else        register     union
-```
-
-It does not support:
-```
-auto        enum         restrict    unsigned
-break       extern       return      void
-case        float        short       volatile
-char        for          signed      while
-const       goto         sizeof      _Bool
-continue    if           static      _Complex
-default     inline       struct      _Imaginary
-do          int          switch
-double      long         typedef
-else        register     union
-```
+![Keywords](https://raw.githubusercontent.com/infinixius/nme-c/main/.github/keywords.png)
 
 # Acknowledgements
 
