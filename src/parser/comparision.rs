@@ -17,7 +17,7 @@ pub fn parse_comparision(op: char, value: Token, tokens: &[Token], pointer: &mut
 		panic!("Only two operands are allowed in an comparision operation")
 	}
 
-	let node = Expression::Arithmetic {
+	let node = Expression::Comparison {
 		operator: operator,
 		left: Box::new(left[0].clone()),
 		right: Box::new(right[0].clone())

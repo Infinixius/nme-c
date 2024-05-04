@@ -27,26 +27,6 @@ fn void_char() {
 
 #[test]
 #[should_panic]
-fn int_type_missing() {
-	const SOURCE: &str = "x = 1;";
-
-	let tokens = tokenize(SOURCE);
-
-	let tree = parse(tokens, nme_c::parser::Context::Program);
-}
-
-#[test]
-#[should_panic]
-fn char_type_missing() {
-	const SOURCE: &str = "x = 'a';";
-
-	let tokens = tokenize(SOURCE);
-
-	let tree = parse(tokens, nme_c::parser::Context::Program);
-}
-
-#[test]
-#[should_panic]
 fn char_type_mismatch() {
 	const SOURCE: &str = "char x = 1;";
 

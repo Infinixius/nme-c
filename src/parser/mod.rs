@@ -227,11 +227,19 @@ pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 						tree.push(Node::Continue);
 					},
 
+					"do" => {
+						todo!()
+					},
+
+					"register" => {
+						todo!()
+					},
+
 					"const" => {}, // Ignore, as we parse constants in the variable declaration
 
 					"asm" => {},
 
-					"auto" | "do" | "double" | "extern" | "float" | "long" | "register" | "short" | "signed" | "static" | "typedef" | "union" | "unsigned" => {
+					"auto"  | "double" | "extern" | "float" | "goto" | "long" | "restrict" | "short" | "sizeof" | "static" | "typedef" | "union" | "unsigned" => {
 						panic!("The {} keyword is not supported", identifier);
 					},
 

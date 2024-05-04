@@ -42,6 +42,7 @@ else        register     union
 
 - [cc65](https://github.com/cc65/cc65)
 - [6502js](https://itema-as.github.io/6502js/)
+- [wrecc](https://github.com/PhilippRados/wrecc)
 
 # License
 

@@ -208,3 +208,57 @@ fn constant() {
 
 	assert_eq!(tree, ideal_tree);
 }
+
+#[test]
+fn variable_assignment() {
+	const SOURCE: &str = "x = 1;";
+
+	let tokens = tokenize(SOURCE);
+
+	let ideal_tokens = vec![
+		Token::Identifier("x".into()),
+		Token::Operator('='),
+		Token::Number("1".into()),
+		Token::Separator(';'),
+	];
+
+	assert_eq!(tokens, ideal_tokens);
+
+	let tree = parse(tokens, nme_c::parser::Context::Program);
+
+	let ideal_tree = vec![
+		Node::VariableAssignment {
+			name: "x".into(),
+			value: vec![Node::NumberLiteral(1)]
+		},
+	];
+
+	assert_eq!(tree, ideal_tree);
+}
+
+#[test]
+fn char_type_missing() {
+	const SOURCE: &str = "x = 'a';";
+
+	let tokens = tokenize(SOURCE);
+
+	let ideal_tokens = vec![
+		Token::Identifier("x".into()),
+		Token::Operator('='),
+		Token::Char('a'),
+		Token::Separator(';'),
+	];
+
+	assert_eq!(tokens, ideal_tokens);
+
+	let tree = parse(tokens, nme_c::parser::Context::Program);
+
+	let ideal_tree = vec![
+		Node::VariableAssignment {
+			name: "x".into(),
+			value: vec![Node::CharLiteral('a')]
+		},
+	];
+
+	assert_eq!(tree, ideal_tree);
+}

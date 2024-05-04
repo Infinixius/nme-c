@@ -1,4 +1,4 @@
-use crate::parser::{parse, Context, Node, Type, Token};
+use crate::parser::{parse, Context, Expression, Node, Token, Type};
 
 pub fn parse_variable(identifier: &str, next_token: Option<&Token>, last_token: Option<&Token>, tokens: &[Token], pointer: &mut usize, tree: &mut Vec<Node>) {
 	let constant: bool = last_token == Some(&Token::Identifier("const".to_string()));
@@ -42,7 +42,10 @@ pub fn parse_variable(identifier: &str, next_token: Option<&Token>, last_token: 
 	if variable_type == Type::Int && parsed_variable_tokens.len() > 0 {
 		match &parsed_variable_tokens[0] {
 			Node::NumberLiteral(_) => {},
-			Node::Expression  {..} => {}
+			Node::Expression (exp) => match exp {
+				Expression::Arithmetic { .. } => {},
+				_ => panic!("Invalid value for int variable")
+			}
 			_ => panic!("Invalid value for int variable")
 		}
 	} else if variable_type == Type::Char && parsed_variable_tokens.len() > 0 {

@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use nme_c::{
 	compiler::compile,
-	parser::{parse, Node, Type},
+	parser::{parse, Expression, Node, Type},
 	tokenizer::{tokenize, Token},
 };
 
@@ -207,11 +207,11 @@ fn function_body_with_arguments() {
 					constant: false,
 					var_type: Type::Int,
 					value: Some(vec![
-						Node::Arithmetic {
+						Node::Expression(Expression::Arithmetic {
 							operator: nme_c::parser::Operator::Add,
 							left: Box::new(Node::VariableReference("a".to_string())),
 							right: Box::new(Node::VariableReference("b".to_string())),
-						}
+						})
 					]),
 				}
 			],
