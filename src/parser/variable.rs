@@ -42,7 +42,7 @@ pub fn parse_variable(identifier: &str, next_token: Option<&Token>, last_token: 
 	if variable_type == Type::Int && parsed_variable_tokens.len() > 0 {
 		match &parsed_variable_tokens[0] {
 			Node::NumberLiteral(_) => {},
-			Node::Arithmetic  {..} => {}
+			Node::Expression  {..} => {}
 			_ => panic!("Invalid value for int variable")
 		}
 	} else if variable_type == Type::Char && parsed_variable_tokens.len() > 0 {
@@ -59,6 +59,36 @@ pub fn parse_variable(identifier: &str, next_token: Option<&Token>, last_token: 
 		constant,
 		var_type: variable_type,
 		value: if parsed_variable_tokens.len() > 0 { Some(parsed_variable_tokens) } else { None }
+	};
+
+	debugln!("parse_variable new node: {:?}", node);
+
+	tree.push(node);
+}
+
+pub fn parse_variable_assignment(identifier: &str, next_token: Option<&Token>, last_token: Option<&Token>, tokens: &[Token], pointer: &mut usize, tree: &mut Vec<Node>) {
+	let mut variable_tokens: Vec<Token> = Vec::new();
+	
+	*pointer += 1;
+
+	while *pointer < tokens.len() {
+		*pointer += 1;
+		let token = &tokens[*pointer];
+
+		debugln!("parse_variable_assignment token: {:?}", token);
+
+		if *token == Token::Separator(';') {
+			break;
+		} else {
+			variable_tokens.push(token.clone());
+		}
+	}
+
+	let parsed_variable_tokens: Vec<Node> = parse(variable_tokens, Context::VariableDeclaration);
+
+	let node = Node::VariableAssignment {
+		name: identifier.into(),
+		value: parsed_variable_tokens
 	};
 
 	debugln!("parse_variable new node: {:?}", node);

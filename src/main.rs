@@ -11,7 +11,6 @@ use std::time::Instant;
 use tokenizer::tokenize;
 
 fn main() {
-
     // Setup custom panic hook
     std::panic::set_hook(Box::new(|panic_info: &std::panic::PanicInfo| {
         if panic_info.location().is_some() && get_panic_info_message(panic_info).is_some() {
@@ -54,6 +53,14 @@ fn main() {
 
         for node in &tree {
             println!("{:?}", node);
+        }
+
+        println!("{} Compilation step", "BEGIN:".yellow());
+
+        let instructions = compiler::compile(tree);
+
+        for instruction in &instructions {
+            println!("{:?}", instruction);
         }
 
         println!("{} Compiled {} in {:?}", "SUCCESS:".bright_green(), file_path, start.elapsed());

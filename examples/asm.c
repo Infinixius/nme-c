@@ -7,13 +7,14 @@ void main() {
 
 	int a = x + 2;
 	// ADC #$02
+	// CLC
 	// STA $0001
 
 	int s = a - 3;
 	// SBC #$05
 	// STA $0002
 
-	int m = 3 * 3;
+	int m = 3 * 3;  
 	// LDA #$03
 	// 	ADC #$03
 	// ADC #$03

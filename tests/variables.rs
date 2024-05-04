@@ -95,14 +95,14 @@ fn boolean() {
 }
 
 #[test]
-fn uninitialized() {
-	const SOURCE: &str = "int u;";
+fn uninitialized_int() {
+	const SOURCE: &str = "int ui;";
 
 	let tokens = tokenize(SOURCE);
 
 	let ideal_tokens = vec![
 		Token::Identifier("int".into()),
-		Token::Identifier("u".into()),
+		Token::Identifier("ui".into()),
 		Token::Separator(';'),
 	];
 
@@ -112,9 +112,65 @@ fn uninitialized() {
 
 	let ideal_tree = vec![
 		Node::Variable {
-			name: "u".into(),
+			name: "ui".into(),
 			constant: false,
 			var_type: Type::Int,
+			value: None
+		},
+	];
+
+	assert_eq!(tree, ideal_tree);
+}
+
+#[test]
+fn uninitialized_char() {
+	const SOURCE: &str = "char uc;";
+
+	let tokens = tokenize(SOURCE);
+
+	let ideal_tokens = vec![
+		Token::Identifier("char".into()),
+		Token::Identifier("uc".into()),
+		Token::Separator(';'),
+	];
+
+	assert_eq!(tokens, ideal_tokens);
+
+	let tree = parse(tokens, nme_c::parser::Context::Program);
+
+	let ideal_tree = vec![
+		Node::Variable {
+			name: "uc".into(),
+			constant: false,
+			var_type: Type::Char,
+			value: None
+		},
+	];
+
+	assert_eq!(tree, ideal_tree);
+}
+
+#[test]
+fn uninitialized_boolean() {
+	const SOURCE: &str = "bool ub;";
+
+	let tokens = tokenize(SOURCE);
+
+	let ideal_tokens = vec![
+		Token::Identifier("bool".into()),
+		Token::Identifier("ub".into()),
+		Token::Separator(';'),
+	];
+
+	assert_eq!(tokens, ideal_tokens);
+
+	let tree = parse(tokens, nme_c::parser::Context::Program);
+
+	let ideal_tree = vec![
+		Node::Variable {
+			name: "ub".into(),
+			constant: false,
+			var_type: Type::Boolean,
 			value: None
 		},
 	];

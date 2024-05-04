@@ -1,5 +1,6 @@
-mod arithmetic;
-mod comparision;
+// mod arithmetic;
+// mod comparision;
+mod expression;
 mod for_loop;
 mod function_call;
 mod function_declaration;
@@ -8,90 +9,20 @@ mod return_statement;
 mod variable;
 mod while_loop;
 
-use crate::parser::arithmetic::parse_arithmetic;
-use crate::parser::comparision::parse_comparison;
+// use crate::parser::arithmetic::parse_arithmetic;
+// use crate::parser::comparision::parse_comparison;
+use crate::parser::expression::parse_expression;
 use crate::parser::for_loop::parse_for_loop;
 use crate::parser::function_call::parse_function_call;
 use crate::parser::function_declaration::parse_function_declaration;
 use crate::parser::if_else::parse_if_else;
 use crate::parser::return_statement::parse_return_statement;
-use crate::parser::variable::parse_variable;
+use crate::parser::variable::{parse_variable, parse_variable_assignment};
 use crate::parser::while_loop::parse_while_loop;
 
 use crate::tokenizer::Token;
 use std::collections::HashSet;
 use std::path::Display;
-
-const KEYWORDS: [&str; 26] = [
-	"auto",
-	"break",
-	"case",
-	"char",
-	"const",
-	"continue",
-	"default",
-	"do",
-	// "double",
-	"else",
-	"enum",
-	"extern",
-	// "float",   
-	"for",
-	"goto",
-	"if",
-	"int",
-	// "long",
-	"register",
-	"return",
-	// "short",
-	// "signed",
-	"sizeof",
-	"static",
-	"struct",
-	"switch",
-	"typedef",
-	"union",
-	// "unsigned",
-	"void",
-	"volatile",
-	"while"
-];
-
-const SYMBOLS: [&str; 33] = [
-	"+",
-	"-",
-	"*",
-	"/",
-	"%",
-	"^",
-	"#",
-	"&",
-	"~",
-	"|",
-	"<<",
-	">>",
-	"//",
-	"==",
-	"~=",
-	"<=",
-	">=",
-	"<",
-	">",
-	"=",
-	"(",
-	")",
-	"{",
-	"}",
-	"[",
-	"]",
-	"::",
-	";",
-	":",
-	",",
-	".",
-	"..",
-	"..."
-];
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Type {
@@ -150,16 +81,7 @@ impl std::fmt::Display for Context {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-pub enum Node {
-	None,
-
-	NumberLiteral(i32),
-	CharLiteral(char),
-	BooleanLiteral(bool),
-	StringLiteral(String),
-
-	VariableReference(String),
-
+pub enum Expression {
 	Arithmetic {
 		operator: Operator,
 		left: Box<Node>,
@@ -170,7 +92,21 @@ pub enum Node {
 		operator: Operator,
 		left: Box<Node>,
 		right: Box<Node>
-	},
+	}
+}
+
+#[derive(Debug, Clone, Eq, PartialEq)]
+pub enum Node {
+	None,
+
+	NumberLiteral(i32),
+	CharLiteral(char),
+	BooleanLiteral(bool),
+	StringLiteral(String),
+
+	VariableReference(String),
+
+	Expression(Expression),
 
 	Variable {
 		name: String,
@@ -181,7 +117,7 @@ pub enum Node {
 
 	VariableAssignment {
 		name: String,
-		value: Box<Node>
+		value: Vec<Node>
 	},
 
 	Struct {
@@ -224,11 +160,6 @@ pub enum Node {
 		body: Vec<Node>
 	},
 
-	// DoWhile {
-	// 	condition: Box<Node>,
-	// 	body: Vec<Node>
-	// },
-
 	Return {
 		value: Box<Node>
 	},
@@ -251,7 +182,7 @@ pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 		let next_token: Option<&Token> = tokens.get(pointer + 1);
 		let last_token: Option<&Token> = if pointer > 0 { tokens.get(pointer - 1) } else { None };
 
-		debugln!("parse token_{}: {:?} (last: {:?} next: {:?}) pointer: {}", context, token, last_token, next_token, pointer);
+		debugln!("main_parse: token_{}: {:?} (last: {:?} next: {:?}) pointer: {}", context, token, last_token, next_token, pointer);
 
 		match token {
 			Token::None => { tree.push(Node::None) },
@@ -309,14 +240,24 @@ pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 					},
 
 					"true" | "false" => {
-						tree.push(Node::BooleanLiteral(identifier == "true"));
+						tree.push(Node::BooleanLiteral(
+							match identifier.as_str() {
+								"true" => true,
+								"false" => false,
+								_ => false
+							}
+						));
 					},
 
 					_ => {
 						// Variable reference
 						match next_token {
 							Some(Token::Operator(op)) => { // Arithmetic operation
-								parse_arithmetic(*op, token.clone(), &tokens, &mut pointer, &mut tree);
+								if *op == '=' {
+									parse_variable_assignment(identifier, next_token, last_token, &tokens, &mut pointer, &mut tree);
+								} else {
+									parse_expression(*op, Token::Identifier(identifier.to_string()), &tokens, &mut pointer, &mut tree);
+								}
 							}
 	
 							_ => { // Just a variable reference?
@@ -331,7 +272,7 @@ pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 				if let Token::Number(value) = token { // Number literal
 					match next_token {
 						Some(Token::Operator(op)) => { // Arithmetic operation
-							parse_arithmetic(*op, token.clone(), &tokens, &mut pointer, &mut tree);
+							parse_expression(*op, token.clone(), &tokens, &mut pointer, &mut tree);
 						}
 
 						_ => { // Just a number
