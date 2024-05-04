@@ -239,12 +239,38 @@ pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 
 					"asm" => {},
 
-					"auto"  | "double" | "extern" | "float" | "goto" | "long" | "restrict" | "short" | "sizeof" | "static" | "typedef" | "union" | "unsigned" => {
+					"auto" | "double" | "extern" | "float" | "goto" | "long" | "restrict" | "short" | "sizeof" | "static" | "typedef" | "union" | "unsigned" => {
 						panic!("The {} keyword is not supported", identifier);
 					},
 
 					"bool*" => {
 						panic!("Bool pointers are not supported");
+					},
+
+					// Color literals for the TMS9918 graphics chip
+					"TRANSPARENT" | "BLACK" | "MEDIUM_GREEN" | "LIGHT_GREEN" | "DARK_BLUE" | "LIGHT_BLUE" | "DARK_RED" | "CYAN" | "MEDIUM_RED" | "LIGHT_RED" | "DARK_YELLOW" | "LIGHT_YELLOW" | "DARK_GREEN" | "MAGENTA" | "GRAY" | "WHITE" => {
+						tree.push(Node::NumberLiteral(match identifier.as_str() {
+							"TRANSPARENT" => 0,
+							"BLACK" => 1,
+							"MEDIUM_GREEN" => 2,
+							"LIGHT_GREEN" => 3,
+							"DARK_BLUE" => 4,
+							"LIGHT_BLUE" => 5,
+							"DARK_RED" => 6,
+							"CYAN" => 7,
+							"MEDIUM_RED" => 8,
+							"LIGHT_RED" => 9,
+							"DARK_YELLOW" => 10,
+							"LIGHT_YELLOW" => 11,
+							"DARK_GREEN" => 12,
+							"MAGENTA" => 13,
+							"GRAY" => 14,
+							"WHITE" => 15,
+							_ => {
+								println!("Invalid color: {}", identifier);
+								0
+							}
+						}));
 					},
 
 					"true" | "false" => {

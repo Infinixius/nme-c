@@ -27,24 +27,23 @@ int sqrt(int x);
 
 /* Graphics functions */
 
-typedef enum {
-	TRANSPARENT,
-	BLACK,
-	MEDIUM_GREEN,
-	LIGHT_GREEN,
-	DARK_BLUE,
-	LIGHT_BLUE,
-	DARK_RED,
-	CYAN,
-	MEDIUM_RED,
-	LIGHT_RED,
-	DARK_YELLOW,
-	LIGHT_YELLOW,
-	DARK_GREEN,
-	MAGENTA,
-	GRAY,
-	WHITE
-} COLOR;
+#define COLOR int
+#define TRANSPARENT 0
+#define BLACK 1
+#define MEDIUM_GREEN 2
+#define LIGHT_GREEN 3
+#define DARK_BLUE 4
+#define LIGHT_BLUE 5
+#define DARK_RED 6
+#define CYAN 7
+#define MEDIUM_RED 8
+#define LIGHT_RED 9
+#define DARK_YELLOW 10
+#define LIGHT_YELLOW 11
+#define DARK_GREEN 12
+#define MAGENTA 13
+#define GRAY 14
+#define WHITE 15
 
 int get_screen_width();
 int get_screen_height();

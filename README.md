@@ -12,7 +12,7 @@ The compiler supports the following C keywords:
 
 ![keywords](https://github.com/Infinixius/nme-c/blob/main/.github/keywords.png)
 
-In addition, all keywords that start with `_` are also unsupported (`_Bool`, `_Complex, etc). Most keywords that are unsupported are because of the limited architecture of the 6502, or because of the complexity of implementing them.
+In addition, all keywords that start with `_` are also unsupported (`_Bool`, `_Complex, etc). Most keywords that are unsupported are because of the limited architecture of the 6502, or simply because of the complexity of implementing them.
 
 ## Header
 
@@ -39,24 +39,23 @@ int pow(int x, int y);
 
 /* Graphics functions */
 
-typedef enum {
-	TRANSPARENT,
-	BLACK,
-	MEDIUM_GREEN,
-	LIGHT_GREEN,
-	DARK_BLUE,
-	LIGHT_BLUE,
-	DARK_RED,
-	CYAN,
-	MEDIUM_RED,
-	LIGHT_RED,
-	DARK_YELLOW,
-	LIGHT_YELLOW,
-	DARK_GREEN,
-	MAGENTA,
-	GRAY,
-	WHITE
-} COLOR;
+#define COLOR int
+#define TRANSPARENT 0
+#define BLACK 1
+#define MEDIUM_GREEN 2
+#define LIGHT_GREEN 3
+#define DARK_BLUE 4
+#define LIGHT_BLUE 5
+#define DARK_RED 6
+#define CYAN 7
+#define MEDIUM_RED 8
+#define LIGHT_RED 9
+#define DARK_YELLOW 10
+#define LIGHT_YELLOW 11
+#define DARK_GREEN 12
+#define MAGENTA 13
+#define GRAY 14
+#define WHITE 15
 
 int get_screen_width();
 int get_screen_height();
@@ -91,6 +90,13 @@ void sleep(int ms);
 - [cc65](https://github.com/cc65/cc65)
 - [6502js](https://itema-as.github.io/6502js/)
 - [wrecc](https://github.com/PhilippRados/wrecc)
+
+This project was created by:
+
+- [r3ggo](https://github.com/r3ggo/)
+- [infinixius](https://github.com/Infinixius/)
+- [gianni](https://github.com/xogianni)
+- [funset](https://github.com/fungset)
 
 # License
 
