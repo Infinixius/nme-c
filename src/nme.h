@@ -28,9 +28,22 @@ int sqrt(int x);
 /* Graphics functions */
 
 typedef enum {
+	TRANSPARENT,
 	BLACK,
-	WHITE,
-	// TODO: More colors
+	MEDIUM_GREEN,
+	LIGHT_GREEN,
+	DARK_BLUE,
+	LIGHT_BLUE,
+	DARK_RED,
+	CYAN,
+	MEDIUM_RED,
+	LIGHT_RED,
+	DARK_YELLOW,
+	LIGHT_YELLOW,
+	DARK_GREEN,
+	MAGENTA,
+	GRAY,
+	WHITE
 } COLOR;
 
 int get_screen_width();
@@ -56,5 +69,8 @@ int get_key_press();
 int get_random_number();
 void print(char* text);
 void sleep(int ms);
+
+// In addition, the asm() function is supported for inline assembly.
+// Example: asm("LDA #$01")
 
 #endif
