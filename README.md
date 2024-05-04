@@ -1,13 +1,16 @@
 # nme-c
 
-**nme-c** is a C compiler for the `nme` [6502](https://en.wikipedia.org/wiki/WDC_65C02)-based breadboard computer. It is written in Rust, and compiles a subset of the C language to 6502 assembly.
+**nme-c** is a C compiler for the `nme` [6502](https://en.wikipedia.org/wiki/WDC_65C02)-based breadboard computer, and was created for our school's 2023-2024 year long project. It is written in Rust, and compiles a subset of the C language to 6502 assembly.
 
 # Usage
 
 ## Keywords
 
 The compiler supports the following C keywords:
-![Keywords](https://raw.githubusercontent.com/infinixius/nme-c/main/.github/keywords.png)
+
+![keyword](https://github.com/Infinixius/nme-c/blob/main/.github/keywords.png)
+
+In addition, all keywords that start with `_` are also unsupported (`_Bool`, `_Complex, etc). Most keywords that are unsupported are because of the limited architecture of the 6502, or because of the complexity of implementing them.
 
 # Acknowledgements
 
