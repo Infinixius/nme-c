@@ -16,7 +16,7 @@ In addition, all keywords that start with `_` are also unsupported (`_Bool`, `_C
 
 ## Header
 
-The `nme.h` header file is provided for use with the compiler as a psuedo-standard library. It provides the following functions:
+Due to the limited nature of the 6502 microprocessor, none of the [C standard library](https://en.wikipedia.org/wiki/C_standard_library) is supported. Instead, the `nme.h` header file is provided for use with the compiler as a psuedo-standard library. It provides the following functions:
 
 ```h
 /* Booleans */
