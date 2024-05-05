@@ -5,7 +5,7 @@ use crate::parser::{Expression, Node, Operator};
 
 pub fn compile_arithmetic(expression: Expression, context: &mut CompilerContext) -> Vec<Instruction> {
 	let mut result: Vec<Instruction> = Vec::new();
-	context.address += 1;
+	// context.address += 1;
 
 	if let Expression::Arithmetic { operator, left, right } = expression {
 		let compiled_left = compile_raw(*left, context);

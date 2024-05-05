@@ -56,13 +56,15 @@ pub fn parse_variable(identifier: &str, next_token: Option<&Token>, last_token: 
 		}
 	} else if variable_type == Type::Void {
 		panic!("Invalid type for variable")
+	} else if parsed_variable_tokens.len() > 1 {
+		panic!("Variable can only have one value: {:?}", parsed_variable_tokens)
 	}
 
 	let node = Node::Variable {
 		name: variable_name.to_string(),
 		constant,
 		var_type: variable_type,
-		value: if parsed_variable_tokens.len() > 0 { Some(parsed_variable_tokens) } else { None }
+		value: if parsed_variable_tokens.len() > 0 { Some(Box::new(parsed_variable_tokens.get(0).unwrap().clone())) } else { None }
 	};
 
 	debugln!("parse_variable new node: {:?}", node);

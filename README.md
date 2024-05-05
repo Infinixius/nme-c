@@ -10,7 +10,7 @@ The core of this project is the [MOS Technology 6502](https://en.wikipedia.org/w
 
 ## Installation
 
-Executables can be found on the [releases](https://github.com/Infinixius/nme-c/releases) page. To compile manually:
+Executables can be found on the [releases](https://github.com/Infinixius/nme-c/releases) page. To build manually:
 
 ```bash
 git clone https://github.com/Infinixius/nme-c.git
@@ -27,6 +27,13 @@ The compiler supports the following C keywords:
 ![keywords](https://github.com/Infinixius/nme-c/blob/main/.github/keywords.png)
 
 In addition, all keywords that start with `_` are also unsupported (`_Bool`, `_Complex, etc). Most keywords that are unsupported are because of the limited architecture of the 6502, or simply because of the complexity of implementing them.
+
+
+## Examples
+
+```c
+
+```
 
 ## Header
 

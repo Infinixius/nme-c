@@ -153,7 +153,7 @@ fn function_body() {
 					name: "a".to_string(),
 					constant: false,
 					var_type: Type::Int,
-					value: Some(vec![Node::NumberLiteral(1)]),
+					value: Some(Box::new(Node::NumberLiteral(1))),
 				}
 			],
 		}
@@ -206,13 +206,13 @@ fn function_body_with_arguments() {
 					name: "r".to_string(),
 					constant: false,
 					var_type: Type::Int,
-					value: Some(vec![
+					value: Some(Box::new(
 						Node::Expression(Expression::Arithmetic {
 							operator: nme_c::parser::Operator::Add,
 							left: Box::new(Node::VariableReference("a".to_string())),
 							right: Box::new(Node::VariableReference("b".to_string())),
 						})
-					]),
+					)),
 				}
 			],
 		}

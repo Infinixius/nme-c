@@ -165,6 +165,7 @@ pub fn compile_raw(node: Node, context: &mut CompilerContext) -> Vec<Instruction
 			}
 		}
 		Node::Variable{..} => compile_variable(node.clone(), context),
+		Node::VariableReference{..} => compile_variable_reference(node.clone(), context),
 		_ => {
 			panic!("Unexpected node: {:?}", node)
 		}

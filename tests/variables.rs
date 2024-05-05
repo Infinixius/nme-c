@@ -27,7 +27,7 @@ fn integer() {
 			name: "x".into(),
 			constant: false,
 			var_type: Type::Int,
-			value: Some(vec![Node::NumberLiteral(1)])
+			value: Some(Box::new(Node::NumberLiteral(1)))
 		},
 	];
 
@@ -57,7 +57,7 @@ fn char() {
 			name: "c".into(),
 			constant: false,
 			var_type: Type::Char,
-			value: Some(vec![Node::CharLiteral('a')])
+			value: Some(Box::new(Node::CharLiteral('a')))
 		},
 	];
 
@@ -87,7 +87,7 @@ fn boolean() {
 			name: "b".into(),
 			constant: false,
 			var_type: Type::Boolean,
-			value: Some(vec![Node::BooleanLiteral(true)])
+			value: Some(Box::new(Node::BooleanLiteral(true)))
 		},
 	];
 
@@ -202,7 +202,7 @@ fn constant() {
 			name: "c".into(),
 			constant: true,
 			var_type: Type::Int,
-			value: Some(vec![Node::NumberLiteral(1)])
+			value: Some(Box::new(Node::NumberLiteral(1)))
 		},
 	];
 

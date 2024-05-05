@@ -110,7 +110,7 @@ pub enum Node {
 		name: String,
 		constant: bool,
 		var_type: Type,
-		value: Option<Vec<Node>>
+		value: Option<Box<Node>>
 	},
 
 	VariableAssignment {
@@ -202,19 +202,23 @@ pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 					},
 
 					"if" => {
-
+						todo!()
 					},
 
 					"for" => {
-
+						todo!()
 					},
 
 					"while" => {
+						todo!()
+					},
 
+					"do" => {
+						todo!()
 					},
 
 					"return" => {
-
+						todo!()
 					},
 					
 					"break" => {
@@ -225,17 +229,15 @@ pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 						tree.push(Node::Continue);
 					},
 
-					"do" => {
-						todo!()
-					},
-
 					"register" => {
 						todo!()
 					},
 
 					"const" => {}, // Ignore, as we parse constants in the variable declaration
 
-					"asm" => {},
+					"asm" => {
+						todo!()
+					},
 
 					"auto" | "double" | "extern" | "float" | "goto" | "long" | "restrict" | "short" | "sizeof" | "static" | "typedef" | "union" | "unsigned" => {
 						panic!("The {} keyword is not supported", identifier);
@@ -265,8 +267,7 @@ pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 							"GRAY" => 14,
 							"WHITE" => 15,
 							_ => {
-								println!("Invalid color: {}", identifier);
-								0
+								panic!("Invalid color: {}", identifier);
 							}
 						}));
 					},
