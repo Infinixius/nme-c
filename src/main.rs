@@ -57,10 +57,11 @@ fn main() {
 
         println!("{} Compilation step", "BEGIN:".yellow());
 
-        let instructions = compiler::compile(tree);
+        let mut context = compiler::CompilerContext::default();
+        let instructions = compiler::compile(&tree, &mut context);
 
-        for instruction in &instructions {
-            println!("{:?}", instruction);
+        for instruction in instructions {
+            println!("{}", instruction);
         }
 
         println!("{} Compiled {} in {:?}", "SUCCESS:".bright_green(), file_path, start.elapsed());

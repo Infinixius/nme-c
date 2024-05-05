@@ -1,10 +1,14 @@
+mod arithmetic;
+mod number_literal;
 mod variable;
 
-use variable::compile_variable;
+use arithmetic::compile_arithmetic;
+use number_literal::compile_number_literal;
+use variable::{compile_variable, compile_variable_reference};
 
-use crate::parser::Node;
+use crate::parser::{Expression, Node};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Opcode {
 	ADC,
 	AND,
@@ -84,7 +88,7 @@ impl Display for Opcode {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Instruction {
 	pub opcode: Opcode,
 	pub operand: Option<String>,
@@ -93,7 +97,15 @@ pub struct Instruction {
 
 impl Display for Instruction {
 	fn fmt(&self, f: &mut Formatter) -> Result {
-		todo!()
+		let mut output = format!("{}", self.opcode);
+		if let Some(operand) = &self.operand {
+			output.push_str(&format!(" {}", operand));
+		}
+		if let Some(comment) = &self.comment {
+			// output.push_str(&format!(" ; {}", comment));
+		}
+
+		write!(f, "{}", output)
 	}
 }
 
@@ -114,20 +126,47 @@ impl Instruction {
 	}
 }
 
-pub fn compile(nodes: Vec<Node>) -> Vec<Instruction> {
-	let mut assembly: Vec<Instruction> = Vec::new();
-	let mut addresses: HashMap<String, u8> = HashMap::new();
-	let mut address: u8 = 0;
+#[derive(Debug)]
+pub struct CompilerContext {
+	pub nodes: Vec<Node>,
+	pub assembly: Vec<Instruction>,
+	pub addresses: HashMap<String, u8>,
+	pub address: u8
+}
 
-	for node in nodes {
-		match node {
-			Node::None => assembly.push(Instruction::new_simple(Opcode::NOP)),
-			Node::Variable { ref name, ref constant, ref var_type, ref value } => {
-				compile_variable(node, &mut assembly, &mut addresses, &mut address)
-			},
-			_ => {}
+impl Default for CompilerContext {
+	fn default() -> Self {
+		Self {
+			nodes: Vec::new(),
+			assembly: Vec::new(),
+			addresses: HashMap::new(),
+			address: 0
 		}
 	}
+}
 
-	return assembly;
+pub fn compile(nodes: &[Node], context: &mut CompilerContext) -> Vec<Instruction> {
+	for node in nodes {
+		let new_node = compile_raw(node.clone(), context);
+		context.assembly.extend(new_node);
+	}
+
+	return context.assembly.clone();
+}
+
+pub fn compile_raw(node: Node, context: &mut CompilerContext) -> Vec<Instruction> {
+	return match node {
+		Node::None => vec![Instruction::new_simple(Opcode::NOP)],
+		Node::NumberLiteral(_) => compile_number_literal(node.clone(), context),
+		Node::Expression(expr) => {
+			match expr {
+				Expression::Arithmetic {..} => compile_arithmetic(expr.clone(), context),
+				Expression::Comparison {..} => todo!()
+			}
+		}
+		Node::Variable{..} => compile_variable(node.clone(), context),
+		_ => {
+			panic!("Unexpected node: {:?}", node)
+		}
+	}
 }
