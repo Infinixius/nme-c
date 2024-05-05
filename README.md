@@ -1,10 +1,24 @@
 # nme-c
 
-**nme-c** is a C compiler for the `nme` [6502](https://en.wikipedia.org/wiki/WDC_65C02)-based breadboard computer, and was created for our school's 2023-2024 year long project. It is written in Rust, and compiles a subset of the C language to 6502 assembly.
+**nme-c** is a C compiler for the `nme` [6502](https://en.wikipedia.org/wiki/MOS_Technology_6502)-based breadboard computer, and was created for our school's 2023-2024 year long project. It is written in Rust, and compiles a subset of the C language to 6502 assembly.
 
 ![showcase](https://github.com/Infinixius/nme-c/blob/main/.github/showcase.png)
 
+The core of this project is the [MOS Technology 6502](https://en.wikipedia.org/wiki/MOS_Technology_6502), an 8-bit microprocessor from the 1970s. The original ship was used in many retro computers and consoles from back in the day, from the [Commodore 64](https://en.wikipedia.org/wiki/Commodore_64) to the [NES](https://en.wikipedia.org/wiki/Nintendo_Entertainment_System). More specifically, we are using the [WDC 65C02](https://en.wikipedia.org/wiki/WDC_65C02), a modern version of the original chip with additional capabilities, aswell as fixes for some of the original's bugs. For graphics, we are using the [TMS9918](https://en.wikipedia.org/wiki/TMS9918), and the [KM62256CLP](https://octopart.com/km62256clp-7-samsung-7411989) 32k x 8-bit SRAM for memory.
+
 # Usage
+
+## Installation
+
+Executables can be found on the [releases](https://github.com/Infinixius/nme-c/releases) page. To compile manually:
+
+```bash
+git clone https://github.com/Infinixius/nme-c.git
+cd nme-c
+cargo build
+
+# Executable should be located at nme-c/target/debug/nme-c.exe
+```
 
 ## Keywords
 
