@@ -1,3 +1,7 @@
+mod variable;
+
+use variable::compile_variable;
+
 use crate::parser::Node;
 
 #[derive(Debug)]
@@ -73,7 +77,7 @@ pub enum Opcode {
 	WAI
 }
 
-use std::fmt::{Display, Formatter, Result};
+use std::{collections::HashMap, fmt::{Display, Formatter, Result}};
 impl Display for Opcode {
     fn fmt(&self, f: &mut Formatter) -> Result {
         write!(f, "{:?}", self)
@@ -83,24 +87,47 @@ impl Display for Opcode {
 #[derive(Debug)]
 pub struct Instruction {
 	pub opcode: Opcode,
-	pub operand: Option<i32>,
+	pub operand: Option<String>,
+	pub comment: Option<String>
+}
+
+impl Display for Instruction {
+	fn fmt(&self, f: &mut Formatter) -> Result {
+		todo!()
+	}
 }
 
 impl Instruction {
-	pub fn new(opcode: Opcode, operand: Option<i32>) -> Instruction {
-		Instruction {
+	pub fn new(opcode: Opcode, operand: Option<String>, comment: Option<String>) -> Self {
+		Self {
 			opcode,
-			operand
+			operand,
+			comment
+		}
+	}
+	pub fn new_simple(opcode: Opcode) -> Self {
+		Self {
+			opcode,
+			operand: None,
+			comment: None
 		}
 	}
 }
 
 pub fn compile(nodes: Vec<Node>) -> Vec<Instruction> {
-	let mut instructions: Vec<Instruction> = Vec::new(); 
+	let mut assembly: Vec<Instruction> = Vec::new();
+	let mut addresses: HashMap<String, u8> = HashMap::new();
+	let mut address: u8 = 0;
 
-	let i = Instruction::new(Opcode::NOP, None);
+	for node in nodes {
+		match node {
+			Node::None => assembly.push(Instruction::new_simple(Opcode::NOP)),
+			Node::Variable { ref name, ref constant, ref var_type, ref value } => {
+				compile_variable(node, &mut assembly, &mut addresses, &mut address)
+			},
+			_ => {}
+		}
+	}
 
-	println!("{}", Opcode::NOP);
-
-	return instructions;
+	return assembly;
 }

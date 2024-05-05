@@ -2,8 +2,7 @@ mod arithmetic;
 mod comparision;
 mod expression;
 mod for_loop;
-mod function_call;
-mod function_declaration;
+mod function;
 mod if_else;
 mod return_statement;
 mod variable;
@@ -11,8 +10,7 @@ mod while_loop;
 
 use crate::parser::expression::parse_expression;
 use crate::parser::for_loop::parse_for_loop;
-use crate::parser::function_call::parse_function_call;
-use crate::parser::function_declaration::parse_function_declaration;
+use crate::parser::function::{parse_function_declaration, parse_function_call};
 use crate::parser::if_else::parse_if_else;
 use crate::parser::return_statement::parse_return_statement;
 use crate::parser::variable::{parse_variable, parse_variable_assignment};
@@ -293,8 +291,13 @@ pub fn parse(tokens: Vec<Token>, context: Context) -> Vec<Node> {
 									parse_expression(*op, Token::Identifier(identifier.to_string()), &tokens, &mut pointer, &mut tree);
 								}
 							}
+
+							Some(Token::Separator('(')) => { // Function call
+								parse_function_call(identifier, next_token, last_token, &tokens, &mut pointer, &mut tree);
+							}
 	
 							_ => { // Just a variable reference?
+								debugln!("naive variable reference: {}", identifier);
 								tree.push(Node::VariableReference(identifier.to_string()));
 							}
 						}

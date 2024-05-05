@@ -42,6 +42,7 @@ pub fn parse_variable(identifier: &str, next_token: Option<&Token>, last_token: 
 	if variable_type == Type::Int && parsed_variable_tokens.len() > 0 {
 		match &parsed_variable_tokens[0] {
 			Node::NumberLiteral(_) => {},
+			Node::VariableReference(_) => {},
 			Node::Expression (exp) => match exp {
 				Expression::Arithmetic { .. } => {},
 				_ => panic!("Invalid value for int variable")

@@ -100,3 +100,7 @@ pub fn parse_function_declaration(identifier: &str, next_token: Option<&Token>, 
 
 	tree.push(node);
 }
+
+pub fn parse_function_call(identifier: &str, next_token: Option<&Token>, last_token: Option<&Token>, tokens: &[Token], pointer: &mut usize, tree: &mut Vec<Node>) {
+	println!("parse_function_call({}, {:?}, {:?}, {:?}, {}, {:?})", identifier, next_token, last_token, tokens, pointer, tree);
+}
